@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Application</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Set background color and padding for the body */
+        body {
+            background-color: #ececec; /* Soft light gray background color */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('https://i.pinimg.com/736x/84/19/8d/84198d1957039c3c62baf461a05ef6f0.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Keeps background fixed */
+        }
+
+        /* Center the content */
+        .container {
+            max-width: 1000px;
+            width: 90%;
+            margin: 0 auto;
+            text-align: center;
+            padding: 60px 30px;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            border-radius: 15px;
+            box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px); /* Adds a nice blur effect to the background */
+        }
+
+        /* Styling the header */
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #333;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+        }
+
+        p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            color: #555;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Styling the buttons container */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Styling individual buttons */
+        .btn {
+            background-color: #009688; /* Teal background for buttons */
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            transition: transform 0.3s, background-color 0.3s;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #00796b;
+            transform: scale(1.05); /* Slight scaling effect on hover */
+            border-color: #004d40;
+        }
+
+        /* Logout button style */
+        #logout {
+            background-color: #ff5722; /* Red-orange for logout */
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            margin-top: 40px;
+            transition: background-color 0.3s, transform 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        #logout:hover {
+            background-color: #e64a19;
+            transform: scale(1.05);
+            border-color: #b23c17;
+        }
+
+        /* Add responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            .btn {
+                font-size: 1em;
+                padding: 12px 25px;
+            }
+
+            #logout {
+                font-size: 1em;
+                padding: 12px 25px;
+            }
+
+            h1 {
+                font-size: 2.2em;
+            }
+
+            p {
+                font-size: 1.2em;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Vacation Planner</h1>
+        
+        <p>Plan your next dream vacation effortlessly</p>
+
+        <div class="buttons">
+            <a href="/create" class="btn">Create Plan</a>
+            <a href="/view" class="btn">View Plans</a>
+        </div>
+
+        <button id="logout" class="btn">Logout</button>
+    </div>
+
+    <script>
+        // Check if JWT token is available in localStorage
+        const token = localStorage.getItem("jwt_token");
+
+        if (!token) {
+            // Redirect to sign-in page if no token is found
+            window.location.href = "/signin";
+        }
+
+        document.getElementById("logout").addEventListener("click", function() {
+            localStorage.removeItem("jwt_token");  // Remove the token from localStorage
+            window.location.href = "/signin";  // Redirect to sign-in page
+        });
+
+        // Function to get headers with JWT token
+        function getHeaders() {
+            const token = localStorage.getItem("jwt_token");
+            if (token) {
+                return {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+            }
+            return {
+                'Content-Type': 'application/json'
+            };
+        }
+
+        // Fetch plans with the JWT token
+        fetch('/view/plans', {
+            method: 'GET',
+            headers: getHeaders()  // Add the Authorization header with the token
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Plans:', data);
+            // You can display the plans here or take necessary action
+        })
+        .catch(error => {
+            console.error('Error fetching plans:', error);
+        });
+    </script>
+</body>
+</html>

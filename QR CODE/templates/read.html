@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Read QR Code</title>
+</head>
+<body>
+    <div class="container">
+        <form id="read-form" enctype="multipart/form-data">
+            <input type="file" id="qr-file" accept="image/*" required />
+            <button type="submit">Read QR Code</button>
+        </form>
+    
+        <div id="qr-data"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='read_script.js') }}"></script>
+
+</body>
+</html>

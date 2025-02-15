@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a Vacation Plan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Set a clean background color */
+        body {
+            background-color: #f5f5f5; /* Light gray background */
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            background-image: url('https://i.pinimg.com/736x/84/19/8d/84198d1957039c3c62baf461a05ef6f0.jpg');
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Main container for the form with reduced height */
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px; /* Reduced padding */
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling the header */
+        h1 {
+            text-align: center;
+            font-size: 2.2em; /* Slightly smaller font size */
+            margin-bottom: 20px; /* Reduced margin */
+            color: #36a1a9; /* Accent color */
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Label styling */
+        label {
+            font-size: 1.1em; /* Slightly smaller font size */
+            margin-bottom: 8px; /* Reduced margin */
+            display: block;
+            color: #333;
+        }
+
+        /* Input and textarea styling */
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 10px; /* Reduced padding */
+            margin: 6px 0 15px 0; /* Reduced margin */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+
+        /* Focus effect on input fields */
+        input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
+            border: 1px solid #36a1a9;
+            outline: none;
+        }
+
+        /* Button styling */
+        button {
+            background-color: #36a1a9;
+            color: white;
+            padding: 12px 25px; /* Reduced padding */
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        /* Button hover effect */
+        button:hover {
+            background-color: #2a8082;
+        }
+
+        /* Responsive design for small screens */
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+                padding: 15px; /* Reduced padding for mobile */
+            }
+
+            h1 {
+                font-size: 2em; /* Smaller font size for mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Create a Vacation Plan</h1>
+
+        <form id="create-plan-form">
+            <label for="destination">Destination:</label>
+            <input type="text" id="destination" name="destination" required>
+
+            <label for="dates">Dates (start_date to end_date):</label>
+            <input type="text" id="dates" name="dates" required placeholder="e.g., 2024-12-20 to 2024-12-25">
+
+            <label for="activities">Activities:</label>
+            <input type="text" id="activities" name="activities" required>
+
+            <label for="notes">Notes:</label>
+            <textarea id="notes" name="notes" required></textarea>
+
+            <label for="reminder">Reminder:</label>
+            <input type="text" id="reminder" name="reminder">
+
+            <button type="submit">Create Plan</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("create-plan-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Collect the input data from the form
+            const destination = document.getElementById("destination").value;
+            const dates = document.getElementById("dates").value;
+            const activities = document.getElementById("activities").value;
+            const notes = document.getElementById("notes").value;
+            const reminder = document.getElementById("reminder").value;
+
+            // Get the JWT token from localStorage (or sessionStorage)
+            const token = localStorage.getItem('jwt_token'); 
+
+            // Check if all required fields and token are present
+            if (!destination || !dates || !activities || !notes || !token) {
+                alert("Please fill in all required fields and make sure you're logged in!");
+                return;
+            }
+
+            // Validate date format (simple check for 'YYYY-MM-DD to YYYY-MM-DD')
+            const datePattern = /^\d{4}-\d{2}-\d{2} to \d{4}-\d{2}-\d{2}$/;
+            if (!datePattern.test(dates)) {
+                alert("Please enter the dates in the correct format: 'YYYY-MM-DD to YYYY-MM-DD'");
+                return;
+            }
+
+            const planData = {
+                destination,
+                dates,
+                activities,
+                notes,
+                reminder
+            };
+
+            try {
+                const response = await fetch('/destinations/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Send the token in the Authorization header
+                    },
+                    body: JSON.stringify(planData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Plan created successfully!");
+                    // Redirect to another page, e.g., the destinations list or booking page
+                    window.location.href = '/view';  // Adjust the redirect as needed
+                } else {
+                    alert(data.error || "Failed to create plan.");
+                }
+            } catch (error) {
+                alert("An error occurred while creating the plan.");
+                console.error(error);
+            }
+        });
+    </script>
+</body>    
+</html>

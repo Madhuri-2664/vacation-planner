@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vacation Planner</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f4f8;
+    }
+
+    header {
+      background-color: #3b5998;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+    }
+
+    /* Container for centering content */
+    .container {
+      display: flex;
+      flex-direction: column;  /* Stack images and content vertically */
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    /* Grid for images (flexible layout) */
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Create a responsive grid */
+      gap: 20px;  /* Space between the images */
+      width: 100%;
+      max-width: 1200px;  /* Set max width to ensure images aren't too wide */
+      margin-bottom: 20px; /* Space below images */
+    }
+
+    /* Image Styling */
+    .trip-image {
+      width: 100%;   /* Ensure image is responsive */
+      height: 220px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Description Text */
+    .description {
+      font-size: 20px;
+      margin-bottom: 30px;
+      color: #555;
+    }
+
+    /* Button Container */
+    .button-container {
+      display: flex;
+      gap: 20px; /* Space between buttons */
+      justify-content: center; /* Align buttons in the center */
+      margin-top: 20px; /* Space above the buttons */
+    }
+
+    /* Button Styling */
+    .btn {
+      background-color: #3b5998;
+      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
+      text-decoration: none;
+      border-radius: 5px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #2d4373;
+    }
+
+    /* Footer Styling */
+    footer {
+      background-color: #3b5998;
+      color: white;
+      text-align: center;
+      padding: 5px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <h1>Vacation Planner</h1>
+  </header>
+
+  <!-- Main Content Section -->
+  <div class="container">
+    <!-- Images of Destinations (Image Gallery) -->
+    <div class="image-gallery">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNe-Q84OnKf6oJf3-m7KrYvNwiH0IW_GmuuA&s" alt="Trip Picture 1" class="trip-image">
+      <img src="https://i.pinimg.com/736x/61/44/8f/61448f74969ca2df8f1df8703083e66b.jpg" alt="Trip Picture 2" class="trip-image">
+      <img src="https://www.travelandleisure.com/thmb/9WFBvvcWb6iprVAnByZKvCTs_9E=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/TAL-header-hallstatt-austria-BEAUTEURO0323-640d96b8cfd141c9af4582fd1f11bb42.jpg" alt="Trip Picture 3" class="trip-image">
+      <img src="https://i.pinimg.com/736x/91/94/e6/9194e6fa32d8c38a5ac36e99a18574a4.jpg" alt="Trip Picture 4" class="trip-image">
+    </div>
+
+    <!-- Description of the Planner -->
+    <p class="description">
+      Discover the best destinations and plan your next vacation with us. Whether it's a beach getaway or a mountain retreat, we have the perfect trip for you!
+    </p>
+
+    <!-- Register and Login Buttons -->
+    <div class="button-container">
+        <a href="/register" class="btn">Register</a>
+        <a href="/signin" class="btn">Sign In</a>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <p>© 2024 Vacation Planner. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

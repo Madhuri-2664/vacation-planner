@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Plans</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body{
+            background-color: #ececec; /* Soft light gray background color */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: url('https://i.pinimg.com/736x/84/19/8d/84198d1957039c3c62baf461a05ef6f0.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .plan-container {
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .plan-item {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+        .plan-item h3 {
+            margin: 0;
+        }
+        .plan-item p {
+            margin: 5px 0;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn-danger {
+            background-color: #f44336;
+        }
+        .btn-danger:hover {
+            background-color: #e53935;
+        }
+        .btn-info {
+            background-color: #2196F3;
+        }
+        .btn-info:hover {
+            background-color: #1e88e5;
+        }
+        #qr-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #qr-container img {
+            max-width: 100%;
+            height: auto;
+        }
+        .form-container {
+            display: none;
+            margin-top: 20px;
+        }
+        .form-container input, .form-container textarea {
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Vacation Plans</h1>
+
+        <div id="plans-container" class="plan-container">
+            <!-- Plans will be populated here by JavaScript -->
+        </div>
+
+        <a href="/home" class="btn">Back to Home</a>
+        <button id="logout" class="btn">Logout</button>
+    </div>
+
+    <div id="qr-container"></div>
+
+    <div id="update-form-container" class="form-container">
+        <h2>Update Plan</h2>
+        <form id="update-form">
+            <input type="text" id="update-destination" placeholder="Destination" required>
+            <input type="text" id="update-dates" placeholder="Start Date to End Date" required>
+            <textarea id="update-activities" placeholder="Activities" required></textarea>
+            <textarea id="update-notes" placeholder="Notes" required></textarea>
+            <textarea id="update-reminder" placeholder="Reminder" required></textarea>
+            <button type="submit" class="btn">Update Plan</button>
+        </form>
+    </div>
+
+    <script>
+        const token = localStorage.getItem("jwt_token");
+
+        if (!token) {
+            alert("Please log in first.");
+            window.location.href = "/signin";
+        }
+
+        // Fetch the user's plans from the backend
+        fetch('/view/plans', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (Array.isArray(data) && data.length > 0) {
+                const plansContainer = document.getElementById("plans-container");
+                data.forEach(plan => {
+                    const planDiv = document.createElement("div");
+                    planDiv.classList.add("plan-item");
+                    planDiv.innerHTML = `
+                        <h3>${plan.destination}</h3>
+                        <p><strong>Start Date:</strong> ${plan.start_date}</p>
+                        <p><strong>End Date:</strong> ${plan.end_date}</p>
+                        <p><strong>Activities:</strong> ${plan.activities}</p>
+                        <p><strong>Notes:</strong> ${plan.notes}</p>
+                        <p><strong>Reminder:</strong> ${plan.reminder}</p>
+                        <button class="btn btn-danger" onclick="deletePlan(${plan.id})">Delete</button>
+                        <button class="btn btn-info" onclick="generateQRCode('${plan.destination}')">Share with your Friends</button>
+                        <button class="btn" onclick="editPlan(${plan.id}, '${plan.destination}', '${plan.start_date} to ${plan.end_date}', '${plan.activities}', '${plan.notes}', '${plan.reminder}')">Edit</button>
+                    `;
+                    plansContainer.appendChild(planDiv);
+                });
+            } else {
+                document.getElementById("plans-container").innerHTML = "<p>No vacation plans found.</p>";
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching plans:", error);
+            alert("Failed to load plans.");
+        });
+
+        // Function to delete a plan
+        function deletePlan(planId) {
+            if (confirm("Are you sure you want to delete this plan?")) {
+                fetch(`/delete/plan/${planId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Plan deleted successfully!") {
+                        alert("Plan deleted successfully!");
+                        location.reload(); // Reload the page to reflect the changes
+                    } else {
+                        alert("Failed to delete the plan.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error deleting plan:", error);
+                    alert("An error occurred while deleting the plan.");
+                });
+            }
+        }
+
+        // Function to generate a QR code for a plan
+        function generateQRCode(content) {
+            fetch('/generate/qr', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: content })
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const imgElement = document.createElement("img");
+                const qrContainer = document.getElementById("qr-container");
+                imgElement.src = URL.createObjectURL(blob);
+                qrContainer.innerHTML = ""; // Clear any existing QR code
+                qrContainer.appendChild(imgElement);
+            })
+            .catch(error => {
+                console.error("Error generating QR code:", error);
+                alert("An error occurred while generating the QR code.");
+            });
+        }
+
+        // Function to edit a plan
+        function editPlan(id, destination, dates, activities, notes, reminder) {
+            // Show the form
+            document.getElementById("update-form-container").style.display = "block";
+            
+            // Clear any previous form values
+            document.getElementById("update-destination").value = destination;
+            document.getElementById("update-dates").value = dates;
+            document.getElementById("update-activities").value = activities;
+            document.getElementById("update-notes").value = notes;
+            document.getElementById("update-reminder").value = reminder;
+
+            // Submit updated data when the form is submitted
+            document.getElementById("update-form").onsubmit = function(e) {
+                e.preventDefault();
+
+                const updatedPlan = {
+                    destination: document.getElementById("update-destination").value,
+                    dates: document.getElementById("update-dates").value,
+                    activities: document.getElementById("update-activities").value,
+                    notes: document.getElementById("update-notes").value,
+                    reminder: document.getElementById("update-reminder").value,
+                };
+
+                fetch(`/update/plan/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedPlan)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Vacation plan updated successfully!") {
+                        alert("Plan updated successfully!");
+                        location.reload(); // Reload the page to reflect the updated plan
+                    } else {
+                        alert("Failed to update the plan.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error updating plan:", error);
+                    alert("An error occurred while updating the plan.");
+                });
+            };
+        }
+
+        // Logout function
+        document.getElementById("logout").addEventListener("click", () => {
+            localStorage.removeItem("jwt_token");
+            window.location.href = "/signin";
+        });
+    </script>
+</body>
+</html>

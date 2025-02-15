@@ -1,0 +1,109 @@
+<!-- signin.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20230315/pngtree-summer-travel-vacation-background-image_1948325.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 100vh;
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 80%;
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        border-radius: 8px;
+        backdrop-filter: blur(5px); /* Blurring the background */
+        background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+        text-align: center;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin: 0;
+    }
+
+    button {
+        padding: 10px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    p {
+        color: #333;
+    }
+
+    .btn {
+        padding: 15px 30px;
+        font-size: 18px;
+        margin: 10px;
+        background-color: #4CAF50;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #45a049;
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>Sign In</h1>
+
+        <form id="signin-form">
+            <input type="text" id="username" placeholder="Enter your username" required />
+            <input type="password" id="password" placeholder="Enter your password" required />
+            <button type="submit">Sign In</button>
+        </form>
+
+        <p>Don't have an account? <a href="/register">Register</a></p>
+    </div>
+
+    <script src="{{ url_for('static', filename='signin_script.js') }}"></script>
+</body>
+</html>
